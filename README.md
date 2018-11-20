@@ -1,2 +1,2 @@
 # AndroidWidget
-![ScreenShot](https://ibb.co/e1N90L)
+![alt text](https://imgur.com/a/kXDYIIc)
