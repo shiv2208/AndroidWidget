@@ -1,21 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/round_corner"
+    android:orientation="vertical"
+    android:weightSum="2">
+
+    <LinearLayout
+        android:id="@+id/widget_layout_main"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_weight=".05"
+        android:background="@drawable/widget_top_round_corner"
+        android:orientation="horizontal"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp">
+
+        <ImageView
+            android:id="@+id/widget_img_launcher"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center_vertical"
+            android:padding="5dp"
+            android:src="@drawable/app_icon" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:paddingEnd="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingStart="10dp"
+            android:text="@string/widget_name"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/black"
+            android:textStyle="bold" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/round_corner"
+        android:layout_height="0dp"
+        android:layout_weight="1.9"
         android:orientation="vertical">
 
         <ListView
             android:id="@+id/stack_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
+            android:layout_height="wrap_content"
+            android:divider="@color/colorPrimary"
             android:dividerHeight="1dp"
-            android:divider="@color/colorPrimary"/>
+            android:gravity="center" />
 
         <TextView xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/empty_view"
@@ -27,4 +63,4 @@
             android:textSize="20sp"
             android:textStyle="bold" />
     </LinearLayout>
-</FrameLayout>
+</LinearLayout>
