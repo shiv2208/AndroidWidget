@@ -1,0 +1,152 @@
+    private Camera camera;
+    private int cameraId = 0;
+    private Timer timer;
+======
+ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+            } else {
+                takeInterval();
+            }
+        } else {
+            takeInterval();
+        }
+
+=======
+private void takeInterval() {
+        if (checkCamera()) {
+            timer = new Timer();
+            TimerTask timerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    camera.startPreview();
+                    camera.takePicture(null, null, new SaveImage(getApplicationContext()));
+                }
+            };
+            timer.schedule(timerTask,01, 1000 * 10);
+        }
+    }
+
+    private ArrayList<String> getArray() {
+        ArrayList<String> strings = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            strings.add("Item " + i);
+        }
+        return strings;
+    }
+
+    private boolean checkCamera() {
+
+        if (!getPackageManager()
+                .hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+            Toast.makeText(this, "No camera on this device", Toast.LENGTH_LONG)
+                    .show();
+            return false;
+        } else {
+            cameraId = findFrontFacingCamera();
+            if (cameraId < 0) {
+                Toast.makeText(this, "No front facing camera found.",
+                        Toast.LENGTH_LONG).show();
+                return false;
+            } else {
+                camera = Camera.open(cameraId);
+                return true;
+            }
+        }
+    }
+
+    private int findFrontFacingCamera() {
+        int cameraId = -1;
+        // Search for the front facing camera
+        int numberOfCameras = Camera.getNumberOfCameras();
+        for (int i = 0; i < numberOfCameras; i++) {
+            Camera.CameraInfo info = new Camera.CameraInfo();
+            Camera.getCameraInfo(i, info);
+            if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                Log.d("Main2Activity", "Camera found");
+                cameraId = i;
+                break;
+            }
+        }
+        return cameraId;
+    }
+
+    @Override
+    protected void onPause() {
+        if (camera != null) {
+            timer.cancel();
+            camera.release();
+            camera = null;
+        }
+        super.onPause();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 1:
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    takeInterval();
+                } else {
+                    Toast.makeText(this, "You declined to allow the app to access your camera", Toast.LENGTH_LONG).show();
+                }
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
+    ============
+    public class SaveImage implements Camera.PictureCallback {
+
+    private final Context context;
+
+    public SaveImage(Context context) {
+        this.context = context;
+    }
+
+    @Override
+    public void onPictureTaken(byte[] data, Camera camera) {
+
+        File pictureFileDir = getDir();
+
+        if (!pictureFileDir.exists() && !pictureFileDir.mkdirs()) {
+
+            Log.d("Main2Activity", "Can't create directory to save image.");
+            Toast.makeText(context, "Can't create directory to save image.",
+                    Toast.LENGTH_LONG).show();
+            return;
+
+        }
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyymmddhhmmss");
+        String date = dateFormat.format(new Date());
+        String photoFile = "Picture_" + date + ".jpg";
+
+        String filename = pictureFileDir.getPath() + File.separator + photoFile;
+
+        File pictureFile = new File(filename);
+
+        try {
+            FileOutputStream fos = new FileOutputStream(pictureFile);
+            fos.write(data);
+            fos.close();
+            Toast.makeText(context, "New Image saved:" + photoFile,
+                    Toast.LENGTH_LONG).show();
+        } catch (Exception error) {
+            Log.d("Main2Activity", "File" + filename + "not saved: "
+                    + error.getMessage());
+            Toast.makeText(context, "Image could not be saved.",
+                    Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private File getDir() {
+        File sdDir = Environment
+                .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        return new File(sdDir, "FrantCamera");
+    }
+}
